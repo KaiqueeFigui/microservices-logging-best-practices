@@ -1,6 +1,15 @@
 version: "3"
 
 services:
+  db-asset-registry:
+    image: 'postgres:13.1-alpine'
+    container_name: db-asset-registry
+    environment:
+      - POSTGRES_DB=asset_registry
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
   spring-microservice:
     build:
       context: "."

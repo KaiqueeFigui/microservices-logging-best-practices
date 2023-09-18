@@ -1,9 +1,10 @@
-package kaiqueefigui.com.github.springmicroservice.interceptor;
+package kaiqueefigui.com.github.springmicroservice.config.interceptor;
 
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kaiqueefigui.com.github.springmicroservice.config.ApplicationProperties;
+import kaiqueefigui.com.github.springmicroservice.config.MDCProperties;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.MDC;
 import org.springframework.web.servlet.HandlerInterceptor;
