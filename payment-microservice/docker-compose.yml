@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  service-payment:
+    image: payment-microservice
+    build: 
+      context: '.'
+      dockerfile: ./Dockerfile
+    ports:
+      - '8000:8000'
+    environment:
+      - DB_URL=postgresql://postgres:postgres@db-payment:5432/payment
+  db-payment:
+    image: 'postgres:13.1-alpine'
+    container_name: db-payment
+    environment:
+      - POSTGRES_DB=payment
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'

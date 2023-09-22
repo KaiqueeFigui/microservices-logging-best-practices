@@ -12,4 +12,4 @@ COPY --from=builder /app/target/*.jar /app.jar
 WORKDIR /app
 COPY opentel/opentelemetry-javaagent.jar /app
 ENTRYPOINT ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-jar", "/app.jar"]
-EXPOSE 8081
+EXPOSE 8080
