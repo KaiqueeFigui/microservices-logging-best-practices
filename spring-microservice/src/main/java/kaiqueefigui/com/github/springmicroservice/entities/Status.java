@@ -3,7 +3,8 @@ package kaiqueefigui.com.github.springmicroservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity(name = "status")
+@Entity
+@Table(name = "status", schema = "public")
 @Getter
 @Setter
 @Builder

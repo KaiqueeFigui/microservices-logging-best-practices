@@ -1,12 +1,14 @@
 package kaiqueefigui.com.github.springmicroservice.entities;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity(name = "registry")
+@Entity
+@Table(name = "registry", schema = "public")
 @Getter
 @Setter
 @Builder

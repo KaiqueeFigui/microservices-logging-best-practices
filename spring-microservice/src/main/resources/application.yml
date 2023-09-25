@@ -15,13 +15,12 @@ spring:
       connectionTimeout: '30000'
     platform: postgres
     url: >-
-      jdbc:postgresql://localhost:5432/asset_registry
+      jdbc:postgresql://db-asset-registry:5432/asset_registry
     username: 'postgres'
     password: 'postgres'
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/changelog-master.xml
 
-services:
-  payment:
-    base-url: ${PAYMENT_URL}
+payment:
+  url: ${PAYMENT_URL}

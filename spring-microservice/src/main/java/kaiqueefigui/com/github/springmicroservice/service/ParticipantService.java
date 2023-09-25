@@ -1,14 +1,13 @@
 package kaiqueefigui.com.github.springmicroservice.service;
 
 import kaiqueefigui.com.github.springmicroservice.config.MDCProperties;
-import kaiqueefigui.com.github.springmicroservice.dto.payment.PaymentParticipant;
-import kaiqueefigui.com.github.springmicroservice.dto.payment.PaymentTransaction;
-import kaiqueefigui.com.github.springmicroservice.repository.ParticipantRepository;
 import kaiqueefigui.com.github.springmicroservice.dto.ParticipantRequest;
+import kaiqueefigui.com.github.springmicroservice.dto.payment.PaymentParticipant;
 import kaiqueefigui.com.github.springmicroservice.entities.Participant;
-import lombok.RequiredArgsConstructor;
+import kaiqueefigui.com.github.springmicroservice.repository.ParticipantRepository;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -19,12 +18,13 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @Log4j2
-@RequiredArgsConstructor
 public class ParticipantService {
 
     @Value("${payment.url}")
     private String paymentUrl;
-    private final ParticipantRepository participantRepository;
+
+    @Autowired
+    private ParticipantRepository participantRepository;
 
     public void createParticipant(ParticipantRequest participantRequest) {
         log.info("Create Participant");

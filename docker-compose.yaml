@@ -1,0 +1,43 @@
+version: "3"
+
+services:
+  spring-microservice:
+    build:
+      context: "./spring-microservice"
+      dockerfile: "./Dockerfile"
+    ports:
+      - '8080:8080'
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=spring-microservice
+      - SPRING_PROFILES_ACTIVE=DOCKER
+      - JDK_JAVA_OPTIONS="--add-opens=java.base/java.lang=ALL-UNNAMED,-XX:MaxJavaStackTraceDepth=16000"
+      - PAYMENT_URL=http://service-payment:8000  
+    depends_on:
+      - service-payment
+      - db-asset-registry
+  db-asset-registry:
+    image: 'postgres:13.1-alpine'
+    environment:
+      - POSTGRES_DB=asset_registry
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+  service-payment:
+    image: payment-microservice
+    build:
+      context: './payment-microservice'
+      dockerfile: ./Dockerfile
+    ports:
+      - '8000:8000'
+    environment:
+      - DB_URL=postgresql://postgres:postgres@db-payment:5432/payment
+  db-payment:
+    image: 'postgres:13.1-alpine'
+    environment:
+      - POSTGRES_DB=payment
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5433:5432'
