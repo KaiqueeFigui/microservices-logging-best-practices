@@ -21,3 +21,7 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/changelog-master.xml
+
+services:
+  payment:
+    base-url: ${PAYMENT_URL}

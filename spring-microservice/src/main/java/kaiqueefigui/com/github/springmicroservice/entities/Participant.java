@@ -3,7 +3,7 @@ package kaiqueefigui.com.github.springmicroservice.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
+@Entity(name = "participant")
 @Getter
 @Setter
 @Builder
@@ -22,4 +22,7 @@ public class Participant {
     private String agency;
     @Column(name = "account")
     private String account;
+
+    @Column(name = "paymentId")
+    private Long paymentId;
 }

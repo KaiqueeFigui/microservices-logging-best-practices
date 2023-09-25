@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-@Entity
+@Entity(name = "registry")
 @Getter
 @Setter
 @Builder
@@ -19,12 +20,18 @@ public class Registry {
     private Long id;
     @Column(name = "value")
     private BigDecimal value;
+    @Column(name = "dueDate")
+    private LocalDate dueDate;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idPayer")
     private Participant payer;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "idReceiver")
     private Participant receiver;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "idStatus")
+    private Status status;
 }

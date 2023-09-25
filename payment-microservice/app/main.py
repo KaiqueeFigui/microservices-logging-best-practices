@@ -7,9 +7,16 @@ from .database import models
 from .database.database import SessionLocal, engine
 from .service import participant_service, transaction_service
 from .dto import schemas
+from .config.logger import logger
+from .config.RequestMiddleware import RequestContextMiddleware
+from .database.database import SQLALCHEMY_DATABASE_URL
+
+print(SQLALCHEMY_DATABASE_URL)
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+app.add_middleware(RequestContextMiddleware)
 
 def get_db():
     db = SessionLocal()
@@ -21,6 +28,7 @@ def get_db():
 
 @app.get("/")
 def root():
+    logger.info("Hello world!")
     return {"message": "Hello World"}
 
 @app.post("/participant", response_model=schemas.Participant)
