@@ -1,6 +1,9 @@
 import logging
 import json
 from logging import Formatter
+import logstash
+
+host = 'logstash'
 
 class JsonFormatter(Formatter):
     def __init__(self) -> None:
@@ -13,8 +16,10 @@ class JsonFormatter(Formatter):
             json_record["correlation_id"] = record.__dict__["correlation_id"]
         return json.dumps(json_record)
     
-logger = logging.root
+logger = logging.getLogger('python-logstash-logger')
 handler = logging.StreamHandler()
 handler.setFormatter(JsonFormatter())
-logger.handlers = [handler]
+logstash_hadler = logstash.TCPLogstashHandler(host, 5000, version=1)
+logger.addHandler(handler)
+logger.addHandler(logstash_hadler)
 logger.setLevel(logging.INFO)

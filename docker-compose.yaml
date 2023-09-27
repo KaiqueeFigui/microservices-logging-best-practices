@@ -1,6 +1,54 @@
 version: "3"
 
 services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+    container_name: elasticsearch_springboot
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - elastic
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.3.3
+    container_name: kibana_springboot
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    depends_on:
+      - elasticsearch
+    networks:
+      - elastic
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.3.3
+    container_name: logstash_springboot
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    networks:
+      - elastic
+    depends_on:
+      - elasticsearch
+
   spring-microservice:
     build:
       context: "./spring-microservice"
@@ -8,14 +56,14 @@ services:
     ports:
       - '8080:8080'
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=spring-microservice
       - SPRING_PROFILES_ACTIVE=DOCKER
       - JDK_JAVA_OPTIONS="--add-opens=java.base/java.lang=ALL-UNNAMED,-XX:MaxJavaStackTraceDepth=16000"
       - PAYMENT_URL=http://service-payment:8000  
     depends_on:
       - service-payment
       - db-asset-registry
+    networks:
+      - elastic
   db-asset-registry:
     image: 'postgres:13.1-alpine'
     environment:
@@ -24,6 +72,8 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
+    networks:
+      - elastic
   service-payment:
     image: payment-microservice
     build:
@@ -31,8 +81,13 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - '8000:8000'
+    networks:
+      - elastic
     environment:
       - DB_URL=postgresql://postgres:postgres@db-payment:5432/payment
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=payment-service \
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://35.222.126.236:4317 \
+      - opentelemetry-instrument uvicorn app.main:app --host 0.0.0.0 --port 8000
   db-payment:
     image: 'postgres:13.1-alpine'
     environment:
@@ -41,3 +96,14 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - '5433:5432'
+    networks:
+      - elastic
+
+
+networks:
+  elastic:
+    driver: bridge
+
+volumes:
+  elasticsearch_data:
+    driver: local

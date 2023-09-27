@@ -20,7 +20,7 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         else:
             correlation_id = correlation_id_header
         
-        cf = ContextFilter(filter_name="correlation_id_filter", extra={"correlation_id": correlation_id})
+        cf = ContextFilter(filter_name="correlation_id_filter", extra={"correlation_id": correlation_id, "app": "payment"})
         logger.addFilter(cf)
 
         response = await call_next(request)

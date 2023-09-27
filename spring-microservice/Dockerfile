@@ -10,7 +10,5 @@ FROM openjdk:17
 
 COPY --from=builder /app/target/*.jar /app.jar
 WORKDIR /app
-COPY opentel/opentelemetry-javaagent.jar /app
-ENV SPRING_PROFILES_ACTIVE=DEV
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 EXPOSE 8080
