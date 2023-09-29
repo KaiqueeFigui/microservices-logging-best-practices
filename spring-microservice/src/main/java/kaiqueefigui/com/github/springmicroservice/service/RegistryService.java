@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +48,12 @@ public class RegistryService {
     public void payRegistry(Long registryId) {
         log.info("Pay registry. ID: {}", registryId);
         var registry = registryRepository.findById(registryId).orElseThrow();
+
+        if (!Objects.equals(registry.getStatus().getId(), StatusEnum.NOT_PAID.getId())) {
+            log.error("Registry already paid or payment in progress");
+            throw new RuntimeException("Registry already paid or payment in progress");
+        }
+
         registry.setStatus(StatusEnum.PAYMENT_IN_PROGRESS.getEntity());
         registryRepository.save(registry);
         try {
