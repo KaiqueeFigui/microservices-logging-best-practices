@@ -13,7 +13,7 @@
 				<pattern>
 					<pattern>
 						{
-						"app": "microservice"
+						"app": "registry"
 						}
 					</pattern>
 				</pattern>
@@ -36,7 +36,7 @@
 
 	<springProfile name="DEV">
 		<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-		<root level="INFO">
+		<root level="DEBUG">
 			<appender-ref ref="CONSOLE" />
 		</root>
 	</springProfile>
